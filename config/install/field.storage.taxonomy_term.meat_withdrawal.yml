@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - taxonomy
+  enforced:
+    module:
+      - farm_withdrawal
+id: taxonomy_term.meat_withdrawal
+field_name: meat_withdrawal
+entity_type: taxonomy_term
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

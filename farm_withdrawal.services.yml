@@ -1,0 +1,5 @@
+services:
+  farm_withdrawal.log_subscriber:
+    class: Drupal\farm_withdrawal\EventSubscriber\LogEventSubscriber
+    tags:
+      - { name: 'event_subscriber' }

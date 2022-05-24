@@ -1,0 +1,8 @@
+name: Withdrawal
+description: Medical withdrawal entry features for farmOS.
+type: module
+package: farmOS Contrib
+core_version_requirement: ^9
+dependencies:
+  - farm_medical
+  - farm_material_type
