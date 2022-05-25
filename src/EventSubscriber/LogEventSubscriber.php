@@ -66,17 +66,25 @@ class LogEventSubscriber implements EventSubscriberInterface {
   public function logUpdate(LogEvent $event) {
     $log = $event->log;
 	$withdrawal = $log->get('meat_withdrawal');
-	$withdrawal_days = $log->get('meat_withdrawal')->first()->value;
 	
-
-    // Bail if not a medical log, has no withdrawal or assets.
-     if ($log->bundle() !== 'medical' || $withdrawal->isEmpty() || $log->get('asset')->isEmpty()) {
+    // Bail if not a medical log, is not done or has no withdrawal or assets.
+     if ($log->bundle() !== 'medical' || $withdrawal->isEmpty() || $log->get('asset')->isEmpty() || $log->get('status') !== 'done') {
       return;
     } 
 	
+	$withdrawal_days = $log->get('meat_withdrawal')->first()->value;
+	$timestamp = $log->timestamp->value;
+	
+	$dt = new \DateTime("@$timestamp");
+	$start_date = $dt->format('Y-m-d');
+	$dt2 = $dt->modify('+'. $withdrawal_days. ' days');
+	$end_date = $dt2->format('Y-m-d');
+	
+	
 	foreach ($log->get('asset')->referencedEntities() as $asset) {
+		
 		$referenced_asset = $asset->label();
-		\Drupal::messenger()->addWarning(t("{$referenced_asset} Meat Withdrawal {$withdrawal_days} days."));
+		\Drupal::messenger()->addWarning(t("{$referenced_asset} Meat Withdrawal {$withdrawal_days} days. Ends {$end_date}"));
 	}
 
   }
