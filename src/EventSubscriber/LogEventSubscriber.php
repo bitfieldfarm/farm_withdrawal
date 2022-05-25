@@ -69,12 +69,15 @@ class LogEventSubscriber implements EventSubscriberInterface {
 	$withdrawal_days = $log->get('meat_withdrawal')->first()->value;
 	
 
-    // Bail if not a medical log, has no withdrawal.
-     if ($log->bundle() !== 'medical' || $withdrawal->isEmpty()) {
+    // Bail if not a medical log, has no withdrawal or assets.
+     if ($log->bundle() !== 'medical' || $withdrawal->isEmpty() || $log->get('asset')->isEmpty()) {
       return;
     } 
 	
-	\Drupal::messenger()->addWarning(t("Meat Withdrawal {$withdrawal_days} days."));
+	foreach ($log->get('asset')->referencedEntities() as $asset) {
+		$referenced_asset = $asset->label();
+		\Drupal::messenger()->addWarning(t("{$referenced_asset} Meat Withdrawal {$withdrawal_days} days."));
+	}
 
   }
 }
