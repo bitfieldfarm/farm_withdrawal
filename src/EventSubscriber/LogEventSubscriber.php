@@ -66,13 +66,15 @@ class LogEventSubscriber implements EventSubscriberInterface {
   public function logUpdate(LogEvent $event) {
     $log = $event->log;
 	$withdrawal = $log->get('meat_withdrawal');
+	$withdrawal_days = $log->get('meat_withdrawal')->first()->value;
+	
 
     // Bail if not a medical log, has no withdrawal.
      if ($log->bundle() !== 'medical' || $withdrawal->isEmpty()) {
       return;
     } 
 	
-	\Drupal::messenger()->addWarning(t("Meat Withdrawal days."));
+	\Drupal::messenger()->addWarning(t("Meat Withdrawal {$withdrawal_days} days."));
 
   }
 }
