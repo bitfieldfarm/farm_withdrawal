@@ -99,6 +99,7 @@ class LogEventSubscriber implements EventSubscriberInterface {
 		catch (Exception $e) {
 			\Drupal::logger('farm_calendar')->error($e->getMessage());
 		}
+	}
 			
 	$access_token = $credentials['access_token'];
 	$bearer = "Bearer $access_token";
@@ -145,13 +146,7 @@ class LogEventSubscriber implements EventSubscriberInterface {
 		catch (\Exception $e) {
 			\Drupal::logger('farm_calendar')->error($e->getMessage());
 			\Drupal::messenger()->addError(t("Log: $referenced_asset failed to add calendar event"));
-		}
-		
-		
-		
+		}	
 	}
-
-
   }
-}
 }
