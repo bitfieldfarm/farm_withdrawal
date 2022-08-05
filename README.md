@@ -48,7 +48,7 @@ Document features related to different entity types. For example:
 - Special logic
 - Other special features as needed
 -->
-### Assets
+### Logs
 
 
 <!---
@@ -56,6 +56,7 @@ Document features related to a single bundle.
 -->
 #### Medical Logs
 
+Adds a meat withdrawal field to medical logs
 
 
 <!---
