@@ -9,7 +9,7 @@ farmOS module to flag animal assets with produce withdrawal periods after medica
 This module is an add-on for the [farmOS](http://drupal.org/project/farm)
 distribution.
 
-
+Module still in early development and not ready for deployment to production
 
 <!---
 Geting started.
@@ -78,6 +78,7 @@ Document any logic provided by this module.
 Document any other features provided by this module.
 -->
 ### Other
+Adds Medical Withdrawal period with log details to Google Calendar
 
 <!---
 It might be nice to include a FAQ.
