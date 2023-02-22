@@ -1,0 +1,16 @@
+{
+    "name": "farmer-eds-shed/farm_withdrawal",
+    "description": "Medical withdrawal entry features for farmOS.",
+    "type": "drupal-module",
+    "homepage": "https://github.com/Farmer-Eds-Shed/farm_withdrawal",
+    "license": "GPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Farmer Ed",
+            "email": "63633329+Farmer-Eds-Shed@users.noreply.github.com"
+        }
+    ],
+    "require": {
+        "farmos/farmos": "^2.0"
+    }
+}
