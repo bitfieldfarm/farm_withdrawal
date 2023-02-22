@@ -2,13 +2,19 @@
 
 namespace Drupal\farm_withdrawal\EventSubscriber;
 
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\log\Event\LogEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Copy the referenced material quantity material type meat withdrawal to the medical log.
+ * Log event subscriber for the Withdrawal module.
+ *
+ * This will copy the referenced material quantity material type meat withdrawal
+ * to the medical log.
  */
 class LogEventSubscriber implements EventSubscriberInterface {
+
+  use StringTranslationTrait;
 
   /**
    * {@inheritdoc}
@@ -29,7 +35,8 @@ class LogEventSubscriber implements EventSubscriberInterface {
   public function logPresave(LogEvent $event) {
     $log = $event->log;
 
-    // Bail if not a medical log, has no quantities, or already has a meat withdrawal value.
+    // Bail if not a medical log, has no quantities, or already has a meat
+    // withdrawal value.
     if ($log->bundle() !== 'medical' || $log->get('quantity')->isEmpty() || !$log->get('meat_withdrawal')->isEmpty()) {
       return;
     }
@@ -44,7 +51,8 @@ class LogEventSubscriber implements EventSubscriberInterface {
         return;
       }
 
-      // If the quantity does not have a material type with a meat withdrawal, skip it.
+      // If the quantity does not have a material type with a meat withdrawal,
+      // skip it.
       $material_types = $quantity->get('material_type')->referencedEntities();
       if ($material_type = reset($material_types)) {
         $referenced_meat_withdrawal = $material_type->get('meat_withdrawal')->first()->value;
@@ -58,7 +66,10 @@ class LogEventSubscriber implements EventSubscriberInterface {
   }
 
   /**
+   * Perform actions on log update.
    *
+   * @param \Drupal\log\Event\LogEvent $event
+   *   The log event.
    */
   public function logUpdate(LogEvent $event) {
     $log = $event->log;
@@ -114,7 +125,7 @@ class LogEventSubscriber implements EventSubscriberInterface {
     foreach ($log->get('asset')->referencedEntities() as $asset) {
 
       $referenced_asset = $asset->label();
-      \Drupal::messenger()->addWarning(t("{$referenced_asset} Meat Withdrawal {$withdrawal_days} days. Ends {$end_date}"));
+      \Drupal::messenger()->addWarning($this->t('@asset Meat Withdrawal @days days. Ends @end_date', ['@asset' => $referenced_asset, '@days' => $withdrawal_days, '@end_date' => $end_date]));
 
       // JSON.
       $json_data = json_encode([
@@ -126,7 +137,7 @@ class LogEventSubscriber implements EventSubscriberInterface {
 
       try {
         // Sending POST Request with $json_data to external server.
-        $request = $client->post("https://www.googleapis.com/calendar/v3/calendars/$calendar_id/events",
+        $client->post("https://www.googleapis.com/calendar/v3/calendars/$calendar_id/events",
         [
           'body' => $json_data,
           'headers' =>
@@ -134,13 +145,12 @@ class LogEventSubscriber implements EventSubscriberInterface {
          ['Accept' => "application/json"],
         ]);
         // Getting Response after JSON Decode.
-        $response = json_decode($request->getBody());
-        \Drupal::messenger()->addStatus(t("Log: $referenced_asset sent to calendar"));
+        \Drupal::messenger()->addStatus($this->t('Log: @asset sent to calendar', ['@asset' => $referenced_asset]));
       }
       // Catch http exceptions and log errors.
       catch (\Exception $e) {
         \Drupal::logger('farm_calendar')->error($e->getMessage());
-        \Drupal::messenger()->addError(t("Log: $referenced_asset failed to add calendar event"));
+        \Drupal::messenger()->addError($this->t('Log: @asset failed to add calendar event', ['@asset' => $referenced_asset]));
       }
     }
   }
